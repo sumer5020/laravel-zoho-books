@@ -1,16 +1,82 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sumer5020\ZohoBooks;
 
 use Illuminate\Support\ServiceProvider;
 use Sumer5020\ZohoBooks\Console\Commands\ZohoBooksInit;
+use Sumer5020\ZohoBooks\Contracts\AuthenticationInterface;
+use Sumer5020\ZohoBooks\Services\AuthenticationService;
+use Sumer5020\ZohoBooks\Contracts\ContactInterface;
+use Sumer5020\ZohoBooks\Services\ContactService;
+use Sumer5020\ZohoBooks\Contracts\BankAccountInterface;
+use Sumer5020\ZohoBooks\Services\BankAccountService;
+use Sumer5020\ZohoBooks\Contracts\BankRuleInterface;
+use Sumer5020\ZohoBooks\Services\BankRuleService;
+use Sumer5020\ZohoBooks\Contracts\BankTransactionInterface;
+use Sumer5020\ZohoBooks\Services\BankTransactionService;
+use Sumer5020\ZohoBooks\Contracts\BaseCurrencyAdjustmentInterface;
+use Sumer5020\ZohoBooks\Services\BaseCurrencyAdjustmentService;
+use Sumer5020\ZohoBooks\Contracts\BillInterface;
+use Sumer5020\ZohoBooks\Services\BillService;
+use Sumer5020\ZohoBooks\Contracts\ChartOfAccountInterface;
+use Sumer5020\ZohoBooks\Services\ChartOfAccountService;
+use Sumer5020\ZohoBooks\Contracts\ContactPersonInterface;
+use Sumer5020\ZohoBooks\Services\ContactPersonService;
+use Sumer5020\ZohoBooks\Contracts\CreditNoteInterface;
+use Sumer5020\ZohoBooks\Services\CreditNoteService;
+use Sumer5020\ZohoBooks\Contracts\CurrencyInterface;
+use Sumer5020\ZohoBooks\Services\CurrencyService;
+use Sumer5020\ZohoBooks\Contracts\CustomerPaymentInterface;
+use Sumer5020\ZohoBooks\Services\CustomerPaymentService;
+use Sumer5020\ZohoBooks\Contracts\CustomModuleInterface;
+use Sumer5020\ZohoBooks\Services\CustomModuleService;
+use Sumer5020\ZohoBooks\Contracts\EstimateInterface;
+use Sumer5020\ZohoBooks\Services\EstimateService;
+use Sumer5020\ZohoBooks\Contracts\ExpenseInterface;
+use Sumer5020\ZohoBooks\Services\ExpenseService;
+use Sumer5020\ZohoBooks\Contracts\InvoiceInterface;
+use Sumer5020\ZohoBooks\Services\InvoiceService;
+use Sumer5020\ZohoBooks\Contracts\ItemInterface;
+use Sumer5020\ZohoBooks\Services\ItemService;
+use Sumer5020\ZohoBooks\Contracts\JournalInterface;
+use Sumer5020\ZohoBooks\Services\JournalService;
+use Sumer5020\ZohoBooks\Contracts\OpeningBalanceInterface;
+use Sumer5020\ZohoBooks\Services\OpeningBalanceService;
+use Sumer5020\ZohoBooks\Contracts\ProjectInterface;
+use Sumer5020\ZohoBooks\Services\ProjectService;
+use Sumer5020\ZohoBooks\Contracts\PurchaseOrderInterface;
+use Sumer5020\ZohoBooks\Services\PurchaseOrderService;
+use Sumer5020\ZohoBooks\Contracts\RecurringBillInterface;
+use Sumer5020\ZohoBooks\Services\RecurringBillService;
+use Sumer5020\ZohoBooks\Contracts\RecurringExpenseInterface;
+use Sumer5020\ZohoBooks\Services\RecurringExpenseService;
+use Sumer5020\ZohoBooks\Contracts\RecurringInvoiceInterface;
+use Sumer5020\ZohoBooks\Services\RecurringInvoiceService;
+use Sumer5020\ZohoBooks\Contracts\RetainerInvoiceInterface;
+use Sumer5020\ZohoBooks\Services\RetainerInvoiceService;
+use Sumer5020\ZohoBooks\Contracts\SalesOrderInterface;
+use Sumer5020\ZohoBooks\Services\SalesOrderService;
+use Sumer5020\ZohoBooks\Contracts\TaskInterface;
+use Sumer5020\ZohoBooks\Services\TaskService;
+use Sumer5020\ZohoBooks\Contracts\TaxInterface;
+use Sumer5020\ZohoBooks\Services\TaxService;
+use Sumer5020\ZohoBooks\Contracts\TimeEntryInterface;
+use Sumer5020\ZohoBooks\Services\TimeEntryService;
+use Sumer5020\ZohoBooks\Contracts\UserInterface;
+use Sumer5020\ZohoBooks\Services\UserService;
+use Sumer5020\ZohoBooks\Contracts\VendorCreditInterface;
+use Sumer5020\ZohoBooks\Services\VendorCreditService;
+use Sumer5020\ZohoBooks\Contracts\VendorPaymentInterface;
+use Sumer5020\ZohoBooks\Services\VendorPaymentService;
+use Sumer5020\ZohoBooks\Contracts\ZohoCrmIntegrationInterface;
+use Sumer5020\ZohoBooks\Services\ZohoCrmIntegrationService;
 
 class ZohoBooksServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -21,62 +87,62 @@ class ZohoBooksServiceProvider extends ServiceProvider
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/zohoBooks.php', 'zohoBooks');
-        $this->registerIsp();
+        $this->registerBindings();
         $this->registerZohoBooks();
     }
 
     /**
      * Bind interfaces to their implementations
-     *
-     * @return void
      */
-    private function registerIsp(): void
+    private function registerBindings(): void
     {
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\AuthenticationInterface::class, \Sumer5020\ZohoBooks\Services\AuthenticationService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\ContactInterface::class, \Sumer5020\ZohoBooks\Services\ContactService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\BankAccountInterface::class, \Sumer5020\ZohoBooks\Services\BankAccountService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\BankRuleInterface::class, \Sumer5020\ZohoBooks\Services\BankRuleService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\BankTransactionInterface::class, \Sumer5020\ZohoBooks\Services\BankTransactionService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\BaseCurrencyAdjustmentInterface::class, \Sumer5020\ZohoBooks\Services\BaseCurrencyAdjustmentService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\BillInterface::class, \Sumer5020\ZohoBooks\Services\BillService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\ChartOfAccountInterface::class, \Sumer5020\ZohoBooks\Services\ChartOfAccountService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\ContactPersonInterface::class, \Sumer5020\ZohoBooks\Services\ContactPersonService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\CreditNoteInterface::class, \Sumer5020\ZohoBooks\Services\CreditNoteService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\CurrencyInterface::class, \Sumer5020\ZohoBooks\Services\CurrencyService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\CustomerPaymentInterface::class, \Sumer5020\ZohoBooks\Services\CustomerPaymentService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\CustomModuleInterface::class, \Sumer5020\ZohoBooks\Services\CustomModuleService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\EstimateInterface::class, \Sumer5020\ZohoBooks\Services\EstimateService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\ExpenseInterface::class, \Sumer5020\ZohoBooks\Services\ExpenseService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\InvoiceInterface::class, \Sumer5020\ZohoBooks\Services\InvoiceService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\ItemInterface::class, \Sumer5020\ZohoBooks\Services\ItemService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\JournalInterface::class, \Sumer5020\ZohoBooks\Services\JournalService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\OpeningBalanceInterface::class, \Sumer5020\ZohoBooks\Services\OpeningBalanceService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\ProjectInterface::class, \Sumer5020\ZohoBooks\Services\ProjectService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\PurchaseOrderInterface::class, \Sumer5020\ZohoBooks\Services\PurchaseOrderService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\RecurringBillInterface::class, \Sumer5020\ZohoBooks\Services\RecurringBillService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\RecurringExpenseInterface::class, \Sumer5020\ZohoBooks\Services\RecurringExpenseService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\RecurringInvoiceInterface::class, \Sumer5020\ZohoBooks\Services\RecurringInvoiceService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\RetainerInvoiceInterface::class, \Sumer5020\ZohoBooks\Services\RetainerInvoiceService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\SalesOrderInterface::class, \Sumer5020\ZohoBooks\Services\SalesOrderService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\TaskInterface::class, \Sumer5020\ZohoBooks\Services\TaskService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\TaxInterface::class, \Sumer5020\ZohoBooks\Services\TaxService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\TimeEntryInterface::class, \Sumer5020\ZohoBooks\Services\TimeEntryService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\UserInterface::class, \Sumer5020\ZohoBooks\Services\UserService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\VendorCreditInterface::class, \Sumer5020\ZohoBooks\Services\VendorCreditService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\VendorPaymentInterface::class, \Sumer5020\ZohoBooks\Services\VendorPaymentService::class);
-        $this->app->singleton(\Sumer5020\ZohoBooks\Contracts\ZohoCrmIntegrationInterface::class, \Sumer5020\ZohoBooks\Services\ZohoCrmIntegrationService::class);
+        $bindings = [
+            AuthenticationInterface::class => AuthenticationService::class,
+            ContactInterface::class => ContactService::class,
+            BankAccountInterface::class => BankAccountService::class,
+            BankRuleInterface::class => BankRuleService::class,
+            BankTransactionInterface::class => BankTransactionService::class,
+            BaseCurrencyAdjustmentInterface::class => BaseCurrencyAdjustmentService::class,
+            BillInterface::class => BillService::class,
+            ChartOfAccountInterface::class => ChartOfAccountService::class,
+            ContactPersonInterface::class => ContactPersonService::class,
+            CreditNoteInterface::class => CreditNoteService::class,
+            CurrencyInterface::class => CurrencyService::class,
+            CustomerPaymentInterface::class => CustomerPaymentService::class,
+            CustomModuleInterface::class => CustomModuleService::class,
+            EstimateInterface::class => EstimateService::class,
+            ExpenseInterface::class => ExpenseService::class,
+            InvoiceInterface::class => InvoiceService::class,
+            ItemInterface::class => ItemService::class,
+            JournalInterface::class => JournalService::class,
+            OpeningBalanceInterface::class => OpeningBalanceService::class,
+            ProjectInterface::class => ProjectService::class,
+            PurchaseOrderInterface::class => PurchaseOrderService::class,
+            RecurringBillInterface::class => RecurringBillService::class,
+            RecurringExpenseInterface::class => RecurringExpenseService::class,
+            RecurringInvoiceInterface::class => RecurringInvoiceService::class,
+            RetainerInvoiceInterface::class => RetainerInvoiceService::class,
+            SalesOrderInterface::class => SalesOrderService::class,
+            TaskInterface::class => TaskService::class,
+            TaxInterface::class => TaxService::class,
+            TimeEntryInterface::class => TimeEntryService::class,
+            UserInterface::class => UserService::class,
+            VendorCreditInterface::class => VendorCreditService::class,
+            VendorPaymentInterface::class => VendorPaymentService::class,
+            ZohoCrmIntegrationInterface::class => ZohoCrmIntegrationService::class,
+        ];
+
+        foreach ($bindings as $interface => $implementation) {
+            $this->app->singleton($interface, $implementation);
+        }
     }
 
     /**
      * Registers zohoBooks.
-     *
-     * @return void
      */
     private function registerZohoBooks(): void
     {
@@ -87,34 +153,30 @@ class ZohoBooksServiceProvider extends ServiceProvider
 
     /**
      * Publish package's config file.
-     *
-     * @return void
      */
     private function publishConfig(): void
     {
         $this->publishes([
-            __DIR__ . '/../config' => config_path(),
-        ], 'zohoBooks.config');
+            __DIR__ . '/../config/zohoBooks.php' => config_path('zohoBooks.php'),
+        ], 'zohoBooks-config');
     }
 
     /**
      * Publish package's migrations.
-     *
-     * @return void
      */
     private function publishMigrations(): void
     {
-        $timestamp = date('Y_m_d_His', time());
-        $stub = __DIR__ . '/../database/migrations/create_zoho_tokens_tables.php';
-        $target = $this->app->databasePath() . '/migrations/' . $timestamp . '_create_zoho_tokens_tables.php';
-
-        $this->publishes([$stub => $target], 'zohoBooks.migrations');
+        if ($this->app->runningInConsole()) {
+            if (! class_exists('CreateZohoTokensTables')) {
+                $this->publishes([
+                    __DIR__ . '/../database/migrations/create_zoho_tokens_tables.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_zoho_tokens_tables.php'),
+                ], 'zohoBooks-migrations');
+            }
+        }
     }
 
     /**
      * Register console commands.
-     *
-     * @return void
      */
     private function registerCommands(): void
     {
