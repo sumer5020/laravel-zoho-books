@@ -133,23 +133,339 @@ use Sumer5020\ZohoBooks\Facades\ZohoBooksFacade;
 use ZohoBooks;
 ```
 
-### Authentication
+### Authenticate and Set Up
 
-#### Refresh access token
+1. **Initialize Your Credentials**
+
+   After running the `php artisan zoho:init` command, the access and refresh tokens will be stored in the `zoho_tokens` table. You can retrieve these tokens when making API calls.
+
+2. **Refresh access token**
+
+   To refresh expired access token, use:
+
+   ```php
+   $token = ZohoBooksFacade::authentications()->refreshAccessToken($refresh_token);
+   ```
+
+3. **Revoke access token**
+
+   To revoke the access token, use:
+
+   ```php
+   $status = ZohoBooksFacade::authentications()->revokeRefreshAccessToken($access_token, $refresh_token);
+   ```
+
+> [!NOTE]
+> Once you have the access token, you can use it to call various Zoho Books API endpoints.
+> The package provides a clean interface for each entity.
+
+### Working with Contacts
+
+1. **Create a Contact**
+
+   To create a new contact, use:
+
+   ```php
+   $contactData = new CreateContactDto([
+       'contact_name' => '...',
+       'company_name' => '...',
+       // ... other fields
+   ]);
+
+   $response = ZohoBooksFacade::contacts()->create($token, $organizationId, $contactData);
+   ```
+
+2. **Update a Contact**
+
+   To update an existing contact:
+
+   ```php
+   $updateContactData = new UpdateContactDto([
+       'contact_name' => '...',
+       // ... other fields
+   ]);
+
+   $response = ZohoBooksFacade::contacts()->update($token, $organizationId, $updateContactData);
+   ```
+
+3. **List Contacts**
+
+   To list contacts with pagination:
+
+   ```php
+   $paginationDto = new PaginationDto(['page' => 1, 'per_page' => 10]);
+   $response = ZohoBooksFacade::contacts()->list($token, $organizationId, $paginationDto);
+   ```
+
+4. **Get a Specific Contact**
+
+   To retrieve a specific contact's details:
+
+   ```php
+   $contactId = '...';
+   $response = ZohoBooksFacade::contacts()->get($token, $organizationId, $contactId);
+   ```
+
+5. **Delete a Contact**
+
+   To delete a contact:
+
+   ```php
+   $response = ZohoBooksFacade::contacts()->delete($token, $organizationId, $contactId);
+   ```
+
+### Working with Contact Persons
+
+1. **Create a Contact Person**
+
+   To create a new contact person, use:
+
+   ```php
+    $contactPersonData = new CreateContactPersonDto([
+        'contact_id' => '...',
+        'first_name' => '...',
+        'last_name' => '...',
+        // ... other fields
+    ]);
+
+    $response = ZohoBooksFacade::contactPersons()->create($token, $organizationId, $contactPersonData);
+   ```
+
+2. **Update a Contact Person**
+
+   To update an existing contact person, use:
+
+   ```php
+    $updateContactPersonData = new UpdateContactPersonDto([
+        'contact_id' => '...',
+        'contact_person_id' => '...',
+        'first_name' => '...',
+        // ... other fields
+    ]);
+
+    $response = ZohoBooksFacade::contactPersons()->update($token, $organizationId, $updateContactPersonData);
+   ```
+
+3. **List Contacts Person**
+
+   To list person, use with pagination:
+
+   ```php
+    $paginationDto = new PaginationDto(['page' => 1, 'per_page' => 10]);
+    $response = ZohoBooksFacade::contactPersons()->list($token, $organizationId, $contactId, $paginationDto);
+   ```
+
+4. **Get a Specific Contact Person**
+
+   To retrieve a specific contact person details, use:
+
+   ```php
+    $getContactPersonDto = new GetContactPersonDto(['contact_id' => '...', 'contact_person_id' => '...']);
+    $response = ZohoBooksFacade::contactPersons()->get($token, $organizationId, $getContactPersonDto);
+   ```
+
+5. **Delete a Contact Person**
+
+   To delete a contact person, use:
+
+   ```php
+    $response = ZohoBooksFacade::contactPersons()->delete($token, $organizationId, $contactPersonId);
+   ```
+
+### Working with Estimates
+
+1. **Create an Estimate**
+
+   To create an estimate:
+
+   ```php
+   $estimateData = new CreateEstimateDto([
+       'customer_id' => '...',
+       'currency_id' => '...',
+       // ... other fields
+   ]);
+
+   $response = ZohoBooksFacade::Estimates()->create($token, $organizationId, $estimateData);
+   ```
+
+2. **Update an Estimate**
+
+   To update an existing estimate:
+
+   ```php
+   $updateEstimateData = new UpdateEstimateDto([
+       'estimate_id' => '...',
+       'customer_id' => '...',
+       // ... other fields
+   ]);
+
+   $response = ZohoBooksFacade::Estimates()->update($token, $organizationId, $updateEstimateData);
+   ```
+
+3. **List Estimates**
+
+   To list estimates:
+
+   ```php
+   $paginationDto = new PaginationDto(['page' => 1, 'per_page' => 10]);
+   $response = ZohoBooksFacade::Estimates()->list($token, $organizationId, $paginationDto);
+   ```
+
+4. **Get Estimate Details**
+
+   To get details of a specific estimate:
+
+   ```php
+   $estimateId = 'estimate_id_here';
+   $response = ZohoBooksFacade::Estimates()->get($token, $organizationId, $estimateId);
+   ```
+
+5. **Delete an Estimate**
+
+   To delete an estimate:
+
+   ```php
+   $response = ZohoBooksFacade::Estimates()->delete($token, $organizationId, $estimateId);
+   ```
+
+### Working with Sales Orders
+
+1. **Create a Sales Order**
+
+   To create a new sales order:
+
+   ```php
+   $salesOrderData = new CreateSalesOrderDto([
+       'customer_id' => '...',
+       'currency_id' => '...',
+       // ... other fields
+   ]);
+
+   $response = ZohoBooksFacade::salesOrders()->create($token, $organizationId, $salesOrderData);
+   ```
+
+2. **Update a Sales Order**
+
+   To update an existing sales order:
+
+   ```php
+   $updateSalesOrderData = new UpdateSalesOrderDto([
+       'salesorder_id' => '...',
+       'customer_id' => '...',
+       // ... other fields
+   ]);
+
+   $response = ZohoBooksFacade::salesOrders()->update($token, $organizationId, $updateSalesOrderData);
+   ```
+
+3. **List Sales Orders**
+
+   To list sales orders:
+
+   ```php
+   $paginationDto = new PaginationDto(['page' => 1, 'per_page' => 10]);
+   $response = ZohoBooksFacade::salesOrders()->list($token, $organizationId, $paginationDto);
+   ```
+
+4. **Get a Specific Sales Order**
+
+   To retrieve details of a sales order:
+
+   ```php
+   $salesOrderId = '...';
+   $response = ZohoBooksFacade::salesOrders()->get($token, $organizationId, $salesOrderId);
+   ```
+
+5. **Delete a Sales Order**
+
+   To delete a sales order:
+
+   ```php
+   $response = ZohoBooksFacade::salesOrders()->delete($token, $organizationId, $salesOrderId);
+   ```
+
+### Error Handling
+
+When making API calls, exceptions may be thrown if something goes wrong. Make sure to handle exceptions properly:
 
 ```php
-$token = ZohoBooksFacade::authentications()->refreshAccessToken($refresh_token);
+try {
+    // Your API call
+} catch (Exception $e) {
+    // Handle the exception
+    echo 'Error: ' . $e->getMessage();
+}
 ```
 
-#### Revoke access token
+## Usage Table
 
-```php
-$status = ZohoBooksFacade::authentications()->revokeRefreshAccessToken($access_token, $refresh_token);
-```
+| Service          | Method                                     | Parameters                          | Parameter Content                                     | Is Mandatory  |
+|:-----------------|:-------------------------------------------|:------------------------------------|:------------------------------------------------------|:--------------|
+| **Contacts**     | `ZohoBooksFacade::contacts()->create()`   | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$contactData`                     | Instance of `CreateContactDto`                        | Yes           |
+|                  | `ZohoBooksFacade::contacts()->update()`   | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$updateContactData`               | Instance of `UpdateContactDto`                        | Yes           |
+|                  | `ZohoBooksFacade::contacts()->list()`     | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$paginationDto`                   | Instance of `PaginationDto`                           | No            |
+|                  |                                           | `$contactFiltersDto`               | Instance of `ContactFiltersDto`                       | No            |
+|                  | `ZohoBooksFacade::contacts()->get()`      | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$contactId`                       | ID of the contact to retrieve                         | Yes           |
+|                  | `ZohoBooksFacade::contacts()->delete()`   | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$contactId`                       | ID of the contact to delete                           | Yes           |
+| **ContactPersons**| `ZohoBooksFacade::contactPersons()->create()`| `$token`                         | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$contactPersonData`               | Instance of `CreateContactPersonDto`                  | Yes           |
+|                  | `ZohoBooksFacade::contactPersons()->update()`| `$token`                         | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$updateContactPersonData`         | Instance of `UpdateContactPersonDto`                  | Yes           |
+|                  | `ZohoBooksFacade::contactPersons()->list()`| `$token`                          | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$contactId`                       | ID of the related contact                              | Yes           |
+|                  |                                           | `$paginationDto`                   | Instance of `PaginationDto`                           | No            |
+|                  | `ZohoBooksFacade::contactPersons()->get()` | `$token`                          | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$getContactPersonDto`             | Instance of `GetContactPersonDto`                     | Yes           |
+|                  | `ZohoBooksFacade::contactPersons()->delete()`| `$token`                        | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$contactPersonId`                 | ID of the contact person to delete                     | Yes           |
+| **Estimates**    | `ZohoBooksFacade::Estimates()->create()`   | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$estimateData`                    | Instance of `CreateEstimateDto`                       | Yes           |
+|                  | `ZohoBooksFacade::Estimates()->update()`   | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$updateEstimateData`              | Instance of `UpdateEstimateDto`                       | Yes           |
+|                  | `ZohoBooksFacade::Estimates()->list()`     | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$paginationDto`                   | Instance of `PaginationDto`                           | Yes           |
+|                  |                                           | `$estimateFiltersDto`              | Instance of `EstimateFiltersDto`                      | No            |
+|                  | `ZohoBooksFacade::Estimates()->get()`      | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$estimateId`                      | ID of the estimate to retrieve                         | Yes           |
+|                  | `ZohoBooksFacade::Estimates()->delete()`   | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$estimateId`                      | ID of the estimate to delete                           | Yes           |
+| **SalesOrders**   | `ZohoBooksFacade::salesOrders()->create()`| `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$salesOrderData`                  | Instance of `CreateSalesOrderDto`                     | Yes           |
+|                  | `ZohoBooksFacade::salesOrders()->update()`| `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$updateSalesOrderData`            | Instance of `UpdateSalesOrderDto`                     | Yes           |
+|                  | `ZohoBooksFacade::salesOrders()->list()`   | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$paginationDto`                   | Instance of `PaginationDto`                           | Yes           |
+|                  |                                           | `$salesOrderFiltersDto`            | Instance of `SalesOrderFiltersDto`                    | No            |
+|                  | `ZohoBooksFacade::salesOrders()->get()`    | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$salesOrderId`                    | ID of the sales order to retrieve                      | Yes           |
+|                  | `ZohoBooksFacade::salesOrders()->delete()` | `$token`                            | Access token for authorization                         | Yes           |
+|                  |                                           | `$organizationId`                  | ID of the organization                                 | Yes           |
+|                  |                                           | `$salesOrderId`                    | ID of the sales order to delete                        | Yes           |
 
 ## License
 
 The MIT License (MIT). Please see [MIT license](LICENSE.md) File for more information.
-
-<div align="right">
-</div>

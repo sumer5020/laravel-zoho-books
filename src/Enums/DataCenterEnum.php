@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sumer5020\ZohoBooks\Enums;
 
 enum DataCenterEnum: string
@@ -13,13 +15,17 @@ enum DataCenterEnum: string
     case China = "https://www.zohoapis.com.cn/books/";
     case SaudiArabia = "https://www.zohoapis.sa/books/";
 
-    # Get the URL based on the DataCenter case
+    /**
+     * Get the URL based on the DataCenter case
+     */
     public function url(): string
     {
         return $this->value;
     }
 
-    # Get the OAuth URL based on the DataCenter case
+    /**
+     * Get the OAuth URL based on the DataCenter case
+     */
     public function oAuthUrl(): string
     {
         return match ($this) {

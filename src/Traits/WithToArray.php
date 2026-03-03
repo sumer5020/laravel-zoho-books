@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sumer5020\ZohoBooks\Traits;
 
 trait WithToArray
@@ -7,11 +9,11 @@ trait WithToArray
     /**
      * Converts the input object properties to an array format.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
-        return array_reduce($this->getKeys(), function ($result, $key) {
+        return array_reduce($this->getKeys(), function (array $result, string $key) {
             if (property_exists($this, $key)) {
                 $result[$key] = $this->$key;
             }
@@ -23,7 +25,7 @@ trait WithToArray
      * Abstract method to get input keys.
      * The implementing class must define this method.
      *
-     * @return array
+     * @return array<int, string>
      */
     abstract protected function getKeys(): array;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sumer5020\ZohoBooks\Contracts;
 
 interface AuthenticationInterface
